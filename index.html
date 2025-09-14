@@ -151,7 +151,8 @@
     <footer class="bg-gray-800 text-white py-8">
         <div class="container mx-auto px-4 text-center">
             <p>&copy; 2025 SHALOM Consulting. Tous droits réservés.</p>
-            <a href="VOTRE_LIEN_YOUTUBE" class="mt-2 text-sm text-gray-400 hover:text-white transition-colors">Visitez notre chaîne YouTube</a>
+            <!-- Lien vers l'adresse e-mail -->
+            <a href="mailto:alonashalom90@gmail.com" class="mt-2 text-sm text-gray-400 hover:text-white transition-colors">Envoyez-nous un e-mail</a>
         </div>
     </footer>
 
@@ -170,21 +171,19 @@
             });
         });
 
-        // NOUVEAU CODE POUR LE FORMULAIRE
+        // CODE POUR LE FORMULAIRE AVEC GETFORM
         const form = document.getElementById('contact-form');
         const formStatus = document.getElementById('form-status');
 
         form.addEventListener('submit', async (e) => {
-            // Empêche l'envoi par défaut du formulaire
             e.preventDefault();
 
-            // Récupère les données du formulaire
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
 
             try {
-                // Envoie les données en tant que JSON à Formspree
-                const response = await fetch('https://formspree.io/f/xeoldwkd', {
+                // Remplacez 'VOTRE_URL_GETFORM' par l'URL de votre formulaire Getform
+                const response = await fetch('https://getform.io/f/bejeoyxa', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -197,14 +196,9 @@
                     formStatus.textContent = 'Votre message a été envoyé avec succès !';
                     formStatus.classList.remove('text-red-500');
                     formStatus.classList.add('text-green-500');
-                    form.reset(); // Réinitialise les champs du formulaire
+                    form.reset();
                 } else {
-                    const result = await response.json();
-                    if (result.errors) {
-                        formStatus.textContent = 'Une erreur est survenue. Veuillez vérifier les informations.';
-                    } else {
-                        formStatus.textContent = 'Échec de l\'envoi du message.';
-                    }
+                    formStatus.textContent = 'Échec de l\'envoi du message. Veuillez réessayer.';
                     formStatus.classList.remove('text-green-500');
                     formStatus.classList.add('text-red-500');
                 }
