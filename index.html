@@ -127,19 +127,21 @@
                 <p class="text-lg text-gray-600 mb-8">
                     Intéressé par nos services ? Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.
                 </p>
-                <form action="https://formspree.io/f/xeoldwkd" method="POST" class="space-y-6">
+                <form id="contact-form" class="space-y-6">
                     <div>
-                        <input type="text" id="name" placeholder="Votre Nom" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" name="name" id="name" placeholder="Votre Nom" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <input type="email" id="email" placeholder="Votre Email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="email" name="email" id="email" placeholder="Votre Email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <textarea id="message" rows="5" placeholder="Votre Message" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        <textarea name="message" id="message" rows="5" placeholder="Votre Message" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                     </div>
                     <button type="submit" class="w-full btn-primary bg-blue-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors">
                         Envoyer le message
                     </button>
+                    <!-- Message de succès/erreur -->
+                    <div id="form-status" class="mt-4 text-center text-sm font-semibold"></div>
                 </form>
             </div>
         </section>
@@ -149,23 +151,68 @@
     <footer class="bg-gray-800 text-white py-8">
         <div class="container mx-auto px-4 text-center">
             <p>&copy; 2025 SHALOM Consulting. Tous droits réservés.</p>
-            <a href="www.youtube.com/@romeo-shalom" class="text-sm text-gray-400 hover:text-white transition-colors">Visitez notre chaîne YouTube</a>
+            <a href="VOTRE_LIEN_YOUTUBE" class="mt-2 text-sm text-gray-400 hover:text-white transition-colors">Visitez notre chaîne YouTube</a>
         </div>
     </footer>
 
     <script>
+        // JavaScript pour le menu mobile
         document.getElementById('menu-toggle').addEventListener('click', function() {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('hidden');
         });
 
-        // Optional: Hide mobile menu when a link is clicked
         const mobileLinks = document.querySelectorAll('#mobile-menu a');
         mobileLinks.forEach(link => {
             link.addEventListener('click', () => {
                 const mobileMenu = document.getElementById('mobile-menu');
                 mobileMenu.classList.add('hidden');
             });
+        });
+
+        // NOUVEAU CODE POUR LE FORMULAIRE
+        const form = document.getElementById('contact-form');
+        const formStatus = document.getElementById('form-status');
+
+        form.addEventListener('submit', async (e) => {
+            // Empêche l'envoi par défaut du formulaire
+            e.preventDefault();
+
+            // Récupère les données du formulaire
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                // Envoie les données en tant que JSON à Formspree
+                const response = await fetch('https://formspree.io/f/xeoldwkd', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    formStatus.textContent = 'Votre message a été envoyé avec succès !';
+                    formStatus.classList.remove('text-red-500');
+                    formStatus.classList.add('text-green-500');
+                    form.reset(); // Réinitialise les champs du formulaire
+                } else {
+                    const result = await response.json();
+                    if (result.errors) {
+                        formStatus.textContent = 'Une erreur est survenue. Veuillez vérifier les informations.';
+                    } else {
+                        formStatus.textContent = 'Échec de l\'envoi du message.';
+                    }
+                    formStatus.classList.remove('text-green-500');
+                    formStatus.classList.add('text-red-500');
+                }
+            } catch (error) {
+                formStatus.textContent = 'Impossible de se connecter au serveur. Veuillez réessayer plus tard.';
+                formStatus.classList.remove('text-green-500');
+                formStatus.classList.add('text-red-500');
+            }
         });
     </script>
 </body>
